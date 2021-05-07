@@ -13,6 +13,8 @@ To be familiar with flags add `--help` at the end, this displays you the useful 
 Let's do `python -m passman --setup`. This calls a particular method that does all the setting magic.
 
 # Some video-examples:
-![Setup example](https://github.com/Dositan/password-manager/blob/master/passman/data/assets/example.gif)
+### Setup example:
+![](https://github.com/Dositan/password-manager/blob/master/passman/data/assets/example.gif)
 
-![Generating the password and showing the data](https://github.com/Dositan/password-manager/blob/master/passman/data/assets/example2.gif)
+### Generating the password and showing the data
+![](https://github.com/Dositan/password-manager/blob/master/passman/data/assets/example2.gif)

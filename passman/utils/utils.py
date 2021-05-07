@@ -2,11 +2,9 @@ import json
 import random
 from typing import NoReturn, Optional, Union
 
-from .constants import *
-from .database import DatabaseManager
-from .exceptions import NotOwner
-from .formats import TabulateData
-from .logger import create_logger
+from passman.core import DatabaseManager, create_logger
+from passman.core.constants import *
+from passman.utils import NotOwner, TabulateData
 
 __all__ = ('PasswordManager',)
 

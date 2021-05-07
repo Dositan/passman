@@ -1,6 +1,6 @@
 import argparse
 
-from passman.core import PasswordArguments, PasswordManager, create_logger
+from passman import PasswordArguments, PasswordManager, create_logger
 
 logger = create_logger('passman')
 parser = PasswordArguments()
