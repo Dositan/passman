@@ -6,10 +6,20 @@ class TabulateData:
         self._columns = []
 
     def set_columns(self, columns: tuple):
+        """Set columns for the visual table.
+
+        Args:
+            columns (tuple): A tuple of strings (names) of columns.
+        """
         self._columns = columns
         self._widths = [len(c) + 2 for c in columns]
 
     def _add_row(self, row: tuple):
+        """Add a row for the visual table.
+
+        Args:
+            row (tuple): A tuple of values of columns.
+        """
         rows = [str(r) for r in row]
         self._rows.append(rows)
 
@@ -19,10 +29,24 @@ class TabulateData:
                 self._widths[index] = width
 
     def set_rows(self, rows: list):
+        """Set multiple rows for the visual table.
+
+        This just is an iterative way of the self._add_row method.
+
+        Args:
+            rows (list): A list of tuples of values of columns.
+        """
         for row in rows:
             self._add_row(row)
 
-    def render(self):
+    def render(self) -> str:
+        """The main method that puts all the magic together.
+
+        This method visualizes the table manipulating with loads of values.
+
+        Returns:
+            str: The rendered table.
+        """
         sep = '+'.join('-' * w for w in self._widths)
         sep = f'+{sep}+'
 

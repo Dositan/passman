@@ -1,3 +1,4 @@
+import os.path
 import sqlite3
 from typing import NoReturn, Optional
 
@@ -15,9 +16,20 @@ class DatabaseManager:
         self.cursor = self._connection.cursor()
         self.logger = create_logger(self.__class__.__name__)
 
-        self._build_schema()  # Simply, the setup process.
+        if not os.path.isfile(f'{PATH}/passwords.db'):
+            self._build_schema()  # Simply, the setup process.
+            # Build the schema only if the file does not exist yet.
 
     def push(self, sql: str, args: tuple = None) -> NoReturn:
+        """The push method to ease up the database manipulation for the developer.
+
+        Args:
+            sql (str): An SQL query to execute.
+            args (tuple, optional): A tuple of arguments to pass. Defaults to None.
+
+        Returns:
+            NoReturn: Means that the method returns nothing.
+        """
         if args:
             self.cursor.execute(sql, args)
         else:
@@ -26,7 +38,11 @@ class DatabaseManager:
         self._connection.commit()
 
     def _build_schema(self) -> NoReturn:
-        """This is the method that simply does the setup process."""
+        """This is a method that simply runs the database setup process.
+
+        Returns:
+            NoReturn: Means that the method returns nothing.
+        """
         self.logger.info('Trying to build the schema...')
 
         try:
@@ -40,6 +56,17 @@ class DatabaseManager:
             self.logger.error(f'Failed to build: {e}')
 
     def add(self, network: str, email: str, content: str) -> NoReturn:
+        """A quick add method that saves the account
+        data according to the given parameters.
+
+        Args:
+            network (str): The network name.
+            email (str): The email address for the network.
+            content (str): The password for the network you log in with.
+
+        Returns:
+            NoReturn: Means that the method returns nothing.
+        """
         query = 'INSERT INTO passwords(network, email, content) VALUES(?, ?, ?);'
 
         try:
@@ -48,8 +75,26 @@ class DatabaseManager:
             self.logger.error('This network credits already exist in the database.')
 
     def remove(self, network: str) -> NoReturn:
+        """A quick remove method that deletes a row with the given network
+        from the local database.
+
+        Args:
+            network (str): The network name, case matters.
+
+        Returns:
+            NoReturn: Means that the method returns nothing.
+        """
         query = 'DELETE FROM passwords WHERE network = ?;'
         self.push(query, network)
 
     def update(self, query: str, values: tuple) -> NoReturn:
+        """A quick update method that runs the given query using given values.
+
+        Args:
+            query (str): An SQL query to execute.
+            values (tuple): A tuple of values to replace the old values with.
+
+        Returns:
+            NoReturn: Means that the method returns nothing.
+        """
         self.push(query, values)

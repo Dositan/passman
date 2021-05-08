@@ -25,7 +25,16 @@ class ColoredFormatter(logging.Formatter):
 
 
 def create_logger(logger_name: str, level=logging.INFO) -> logging.Logger:
-    """Files' logger initializer."""
+    """The logger initializing method used to ease up the logging manipulation.
+
+    Args:
+        logger_name (str): The logger name you would like to set.
+        level (optional): The minimal logging level, anything below will be
+        accordingly ignored. Defaults to logging.INFO.
+
+    Returns:
+        logging.Logger: A logger object that consequently logs events.
+    """
     logger = logging.getLogger(logger_name)
     handler = logging.StreamHandler()
 

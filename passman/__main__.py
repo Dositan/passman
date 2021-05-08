@@ -4,7 +4,7 @@ from passman import PasswordArguments, PasswordManager, create_logger
 
 logger = create_logger('passman')
 parser = PasswordArguments()
-parser.add('--setup', 'Whether to set owner name with password.')
+parser.add('--setup', 'Whether to set the owner name with the password.')
 
 
 def main():
