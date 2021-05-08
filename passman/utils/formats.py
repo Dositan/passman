@@ -5,11 +5,11 @@ class TabulateData:
         self._widths = []
         self._columns = []
 
-    def set_columns(self, columns: tuple):
+    def set_columns(self, columns: list):
         """Set columns for the visual table.
 
         Args:
-            columns (tuple): A tuple of strings (names) of columns.
+            columns (list): A list of strings (names) of columns.
         """
         self._columns = columns
         self._widths = [len(c) + 2 for c in columns]

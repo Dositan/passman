@@ -4,14 +4,13 @@ from typing import NoReturn, Optional, Union
 
 from passman.core import DatabaseManager, create_logger
 from passman.core.constants import *
-from passman.utils import NotOwner, TabulateData
+from passman.utils import NotOwner, PasswordStrength, TabulateData
 
 __all__ = ('PasswordManager',)
 
 
 def sinput(message: str):
     """This is just to avoid extra spaces in the user-input
-
     that may cause some logical problems.
 
     Args:
@@ -29,6 +28,7 @@ class PasswordManager:
     def __init__(self):
         self.logger = create_logger(self.__class__.__name__)
         self.database = DatabaseManager()
+        self.strength = PasswordStrength()  # TODO: Use it somewhere.
 
         with open(f'{PATH}/config.json') as file:
             self.config = json.load(file)
@@ -40,25 +40,28 @@ class PasswordManager:
             NoReturn: This means the method returns nothing.
         """
         self.logger.info('Setup process has been started.')
-        name = input('What name you would like to set? ')
-        password = input('What about password? ')
+        name = sinput('What name you would like to set? ')
+        password = sinput('What about password? ')
 
         with open(f'{PATH}/config.json', 'w') as fp:
-            json.dump({'name': name, 'password': password}, fp=fp, indent=4)
+            json.dump(dict(name=name, password=password, use_count=self.config['use_count']), fp=fp, indent=4, )
 
         self.logger.info('Setup process was finished successfully.')
         self.logger.info(f'Current username: {name}')
         self.logger.info(f'Current password: {password}')
 
     def menu(self) -> NoReturn:
-        # Should be called when the app got no flags.
-        ways = (self.generate_password, self.save_password, self.show_data,
-                self.export_data)
+        """The main menu: should be called when the app gets no flags.
+
+        Returns:
+            NoReturn: Means that the method returns nothing.
+        """
+        ways = (self.generate_password, self.save_password, self.show_data, self.export_data)
 
         try:
             # Menu stuff.
             print(MENU_INFO)
-            print('-' * DASH_TIMES)
+            print(DASH_LINE)
 
             option = int(input('What option would you choose? '))
             print(ways[option - 1]())
@@ -66,17 +69,29 @@ class PasswordManager:
         except (ValueError, TypeError, IndexError) as e:
             self.logger.error(e)
 
-    def show_data(self):
-        table = TabulateData()
-        table.set_columns(('network', 'email', 'password'))
+    def show_data(self) -> str:
+        """The data showing method to make the user able to visualize
+        their data, i.e. accounts in a pretty-formatted table.
 
-        query = 'SELECT * FROM passwords;'
-        results = self.database.cursor.execute(query).fetchall()
+        Returns:
+            str: The rendered table.
+        """
+        table = TabulateData()
+        table.set_columns(['network', 'email', 'password'])
+
+        results = self.database.push('SELECT * FROM passwords;').fetchall()
         table.set_rows(results)
 
         return table.render()
 
-    def export_data(self):
+    def export_data(self) -> str:
+        """The data exporting method to make the user able to extract
+
+        all of their data into the `passwords.txt` file.
+
+        Returns:
+            str: The dashline to avoid 'None' caused by printing.
+        """
         path = sinput('Enter the path you would like to save your data in.\n'
                       'For example, Desktop/main: ')
 
@@ -89,7 +104,7 @@ class PasswordManager:
         except FileNotFoundError as e:
             self.logger.error(f'Something went wrong: {e}')
 
-        return '-' * DASH_TIMES  # Avoid 'None' caused by printing.
+        return DASH_LINE  # Avoid 'None' caused by printing.
 
     @staticmethod
     def _get_params(message: str, options: tuple):
@@ -103,7 +118,7 @@ class PasswordManager:
             dict: A dictionary of necessary keys.
         """
         inputs = {option: sinput(message.format(option)) for option in options}
-        print('-' * DASH_TIMES)
+        print(DASH_LINE)
         return inputs
 
     def generate_password(self, **kwargs) -> str:
@@ -141,18 +156,16 @@ class PasswordManager:
 
         self.database.add(**kwargs)
         self.logger.info('Inserted the data successfully.')
-        return '-' * DASH_TIMES  # Avoid 'None' caused by printing.
+        return DASH_LINE  # Avoid 'None' caused by printing.
 
     def check_owner(self):
         """This is the method to check the correct owner beforehand."""
         self.logger.info('Login process has been started.')
         name = sinput('Enter your name: ')
         password = sinput('Enter your password: ')
-        # name and password must match with the data in
-        # config.json, so if it matches we can continue the process.
 
         if name == self.config['name'] and password == self.config['password']:
-            print(f'Welcome back, {name}!\n' + '-' * DASH_TIMES)
+            print(f'Welcome back, {name}!\n{DASH_LINE}')
             return True
 
         raise NotOwner

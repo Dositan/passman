@@ -8,7 +8,7 @@ __all__ = (
     'NUMBERS',
     'UPPERCASE',
     'SPECIAL',
-    'DASH_TIMES',
+    'DASH_LINE'
 )
 
 # Database-config part.
@@ -26,4 +26,4 @@ BASE = 'qwertyuiopasdfghjklzxcvbnm'
 NUMBERS = '1234567890'
 UPPERCASE = 'QWERTYUIOPASDFGHJKLZXCVBNM'
 SPECIAL = '!@#$%^&*()'
-DASH_TIMES = 40  # this is like '*' * 40 to design the menu a bit.
+DASH_LINE = '-' * 40

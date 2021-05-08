@@ -17,25 +17,25 @@ class DatabaseManager:
         self.logger = create_logger(self.__class__.__name__)
 
         if not os.path.isfile(f'{PATH}/passwords.db'):
+            self.logger.exception('Could not find the database.')
             self._build_schema()  # Simply, the setup process.
             # Build the schema only if the file does not exist yet.
 
-    def push(self, sql: str, args: tuple = None) -> NoReturn:
+    def push(self, sql: str, args: tuple = None):
         """The push method to ease up the database manipulation for the developer.
 
         Args:
             sql (str): An SQL query to execute.
-            args (tuple, optional): A tuple of arguments to pass. Defaults to None.
-
-        Returns:
-            NoReturn: Means that the method returns nothing.
+            args (tuple, optional): A tuple of arguments to pass in. Defaults to None.
         """
         if args:
-            self.cursor.execute(sql, args)
-        else:
-            self.cursor.execute(sql)
+            data = self.cursor.execute(sql, args)
+            if sql.lower().startswith('select'):  # no commit() is needed.
+                return data
 
-        self._connection.commit()
+            return self._connection.commit()
+
+        return self.cursor.execute(sql)
 
     def _build_schema(self) -> NoReturn:
         """This is a method that simply runs the database setup process.
