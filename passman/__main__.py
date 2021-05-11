@@ -1,5 +1,3 @@
-import argparse
-
 from passman import PasswordArguments, PasswordManager, create_logger
 
 logger = create_logger('passman')

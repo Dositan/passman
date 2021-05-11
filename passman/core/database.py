@@ -1,6 +1,6 @@
 import os.path
 import sqlite3
-from typing import NoReturn, Optional
+from typing import NoReturn
 
 from .constants import PATH
 from .logger import create_logger

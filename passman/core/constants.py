@@ -17,7 +17,8 @@ Currently-supported features:
 1. Generate the password.
 2. Save the password.
 3. Show all the data stored in the database.
-4. Export all of your passwords.'''
+4. Export all of your passwords.
+5. See the code statistics of the application.'''
 PATH = './passman/data'
 HOME_DIR = str(Path.home())
 

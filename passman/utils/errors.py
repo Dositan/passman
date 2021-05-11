@@ -27,6 +27,6 @@ class LengthNotInRange(BaseException):
 
 class TooWeakPassword(BaseException):
     """Exception is raised when the given password seemed too weak."""
-    
+
     def __init__(self, password: str):
         super().__init__('This password ({}) is too weak.', password)

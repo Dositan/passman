@@ -1,6 +1,8 @@
 import json
 import random
-from typing import NoReturn, Optional, Union
+from collections import Counter
+from glob import glob
+from typing import NoReturn
 
 from passman.core import DatabaseManager, create_logger
 from passman.core.constants import *
@@ -44,7 +46,7 @@ class PasswordManager:
         password = sinput('What about password? ')
 
         with open(f'{PATH}/config.json', 'w') as fp:
-            json.dump(dict(name=name, password=password, use_count=self.config['use_count']), fp=fp, indent=4, )
+            json.dump({'name': name, 'password': password}, fp=fp, indent=4)
 
         self.logger.info('Setup process was finished successfully.')
         self.logger.info(f'Current username: {name}')
@@ -56,7 +58,8 @@ class PasswordManager:
         Returns:
             NoReturn: Means that the method returns nothing.
         """
-        ways = (self.generate_password, self.save_password, self.show_data, self.export_data)
+        ways = (self.generate_password, self.save_password, self.show_data,
+                self.export_data, self.code_statistics)
 
         try:
             # Menu stuff.
@@ -107,7 +110,7 @@ class PasswordManager:
         return DASH_LINE  # Avoid 'None' caused by printing.
 
     @staticmethod
-    def _get_params(message: str, options: tuple):
+    def _get_params(message: str, options: tuple) -> dict:
         """The interactive way to get kwargs that will be passed in `generate_password`.
 
         Args:
@@ -145,7 +148,7 @@ class PasswordManager:
         result = random.choices(BASE, k=length)
         return ''.join(result)
 
-    def save_password(self, **kwargs) -> NoReturn:
+    def save_password(self, **kwargs) -> str:
         """This function is created to save passwords according to the given credits.
 
         Returns:
@@ -158,8 +161,28 @@ class PasswordManager:
         self.logger.info('Inserted the data successfully.')
         return DASH_LINE  # Avoid 'None' caused by printing.
 
-    def check_owner(self):
-        """This is the method to check the correct owner beforehand."""
+    def code_statistics(self) -> str:
+        """See the code statistics of the application."""
+        ctr = Counter()
+
+        for ctr['files'], f in enumerate(glob('./**/*.py', recursive=True)):
+            with open(f, encoding='UTF-8') as fp:
+                for ctr['lines'], line in enumerate(fp, ctr['lines']):
+                    line = line.lstrip()
+                    ctr['classes'] += line.startswith('class')
+                    ctr['functions'] += line.startswith('def')
+
+        return '\n'.join(f'{k.capitalize()}: {v}' for k, v in ctr.items())
+
+    def check_owner(self) -> bool:
+        """This is the method to check the correct owner beforehand.
+
+        Raises:
+            NotOwner: If the given credits did not match.
+
+        Returns:
+            bool: True, if the user passed the owner check.
+        """
         self.logger.info('Login process has been started.')
         name = sinput('Enter your name: ')
         password = sinput('Enter your password: ')
