@@ -14,12 +14,15 @@ def main():
         return pm.setup()
 
     try:
+        if pm.check_config():
+            return  # The configuration is fresh as hell and is not ready
+            # To be used to log in.
+
         pm.check_owner()
+        pm.menu()  # Starting the interactive menu.
 
     except Exception as e:
         return pm.logger.error(e)
-
-    pm.menu()  # Starting the interactive menu.
 
 
 if __name__ == '__main__':

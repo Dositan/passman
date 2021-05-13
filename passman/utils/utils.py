@@ -6,7 +6,7 @@ from typing import NoReturn
 
 from passman.core import DatabaseManager, create_logger
 from passman.core.constants import *
-from passman.utils import NotOwner, PasswordStrength, TabulateData
+from passman.utils import NotOwner, TabulateData
 
 __all__ = ('PasswordManager',)
 
@@ -24,16 +24,67 @@ def sinput(message: str):
     return input(message).strip()
 
 
+def convert_choice(choice: str) -> bool:
+    """The fast way to figure out the user choice.
+
+    Args:
+        choice (str): User-input to grab the choice from.
+
+    Returns:
+        bool: Either True or False, according to the convertation.
+    """
+    if choice.lower() in ('y', 'yes', '+'):
+        return True
+
+    return False
+
+
+def keep_living(func):
+    """A special decorator made to make endless loops for
+    methods that have sense being used with a loop."""
+    def inner(*args, **kwargs):
+        func(*args, **kwargs)
+
+        while convert_choice(sinput('📢 Do you want to continue (y/n)? ')):
+            func(*args, **kwargs)
+
+    return inner
+
+
 class PasswordManager:
     """The Password Manager class to manipulate with generating passwords."""
 
     def __init__(self):
         self.logger = create_logger(self.__class__.__name__)
         self.database = DatabaseManager()
-        self.strength = PasswordStrength()  # TODO: Use it somewhere.
 
         with open(f'{PATH}/config.json') as file:
             self.config = json.load(file)
+
+    def __dir__(self):
+        return [self.generate_password, self.save_password, self.show_data,
+                self.export_data, self.code_statistics]
+
+    def check_config(self) -> bool:
+        """The check config method to manipulate with the configuration file
+        before the program opens the menu. It is useful when the user did not
+        provide their credits to log in and this function exactly catches those
+        moments.
+
+        Returns:
+            bool: The check result.
+        """
+        if not self.config:
+            self.logger.warning('Hey, looks like you did not set up your configuration yet')
+            choice = convert_choice(sinput('but would you want to (y/n)? '))
+            if choice:  # Checking for the "True" case.
+                self.setup()
+
+                # The setup process was already finished.
+                self.logger.info('You are ready to go, run the program again and explore the features.')
+                return True  # At this point, the config will exist.
+
+        return False
 
     def setup(self) -> NoReturn:
         """The setup method called by --setup flag.
@@ -52,49 +103,34 @@ class PasswordManager:
         self.logger.info(f'Current username: {name}')
         self.logger.info(f'Current password: {password}')
 
-    def menu(self) -> NoReturn:
-        """The main menu: should be called when the app gets no flags.
-
-        Returns:
-            NoReturn: Means that the method returns nothing.
-        """
-        ways = (self.generate_password, self.save_password, self.show_data,
-                self.export_data, self.code_statistics)
-
+    def menu(self):
+        """The main menu: should be called when the app gets no flags."""
         try:
             # Menu stuff.
             print(MENU_INFO)
             print(DASH_LINE)
 
             option = int(input('What option would you choose? '))
-            print(ways[option - 1]())
+            return self.__dir__()[option - 1]()
 
         except (ValueError, TypeError, IndexError) as e:
             self.logger.error(e)
 
-    def show_data(self) -> str:
+    def show_data(self):
         """The data showing method to make the user able to visualize
-        their data, i.e. accounts in a pretty-formatted table.
-
-        Returns:
-            str: The rendered table.
-        """
+        their data, i.e. accounts in a pretty-formatted table."""
         table = TabulateData()
         table.set_columns(['network', 'email', 'password'])
 
         results = self.database.push('SELECT * FROM passwords;').fetchall()
         table.set_rows(results)
 
-        return table.render()
+        print(table.render())
 
     def export_data(self) -> str:
         """The data exporting method to make the user able to extract
 
-        all of their data into the `passwords.txt` file.
-
-        Returns:
-            str: The dashline to avoid 'None' caused by printing.
-        """
+        all of their data into the `passwords.txt` file."""
         path = sinput('Enter the path you would like to save your data in.\n'
                       'For example, Desktop/main: ')
 
@@ -106,8 +142,6 @@ class PasswordManager:
 
         except FileNotFoundError as e:
             self.logger.error(f'Something went wrong: {e}')
-
-        return DASH_LINE  # Avoid 'None' caused by printing.
 
     @staticmethod
     def _get_params(message: str, options: tuple) -> dict:
@@ -124,17 +158,23 @@ class PasswordManager:
         print(DASH_LINE)
         return inputs
 
+    @staticmethod
+    def _true_false_only(message: str, options: tuple):
+        """Does the same stuff as _get_params, but is limited in arguments choice.
+        
+        Here y | yes | + considered as True, anything else as False."""
+        inputs = {option: convert_choice(sinput(message.format(option))) for option in options}
+        print(DASH_LINE)
+        return inputs
+
+    @keep_living
     def generate_password(self, **kwargs) -> str:
-        """This function is created to generate passwords of the given length.
-
-        Returns:
-            str: The successfully-generated password.
-        """
+        """This function is created to generate passwords of the given length."""
         global BASE, NUMBERS, UPPERCASE, SPECIAL
-        options = ('length', 'numbers', 'uppercase', 'special characters')
+        options = ('numbers', 'uppercase', 'special characters')
 
-        kwargs = kwargs or self._get_params('Enter the {} option: ', options)
-        length = int(kwargs.pop('length', 20))
+        length = int(input('Enter the length: '))
+        kwargs = kwargs or self._true_false_only('Enter the {} option: ', options)
 
         if kwargs.pop('numbers'):
             BASE += NUMBERS
@@ -146,20 +186,16 @@ class PasswordManager:
             BASE += SPECIAL
 
         result = random.choices(BASE, k=length)
-        return ''.join(result)
+        print(''.join(result))
 
+    @keep_living
     def save_password(self, **kwargs) -> str:
-        """This function is created to save passwords according to the given credits.
-
-        Returns:
-            str: The successfully-saved password.
-        """
+        """This function is created to save passwords according to the given credits."""
         options = ('network', 'email', 'content')
         kwargs = kwargs or self._get_params('Enter the {} credits: ', options)
 
         self.database.add(**kwargs)
-        self.logger.info('Inserted the data successfully.')
-        return DASH_LINE  # Avoid 'None' caused by printing.
+        self.logger.info('✅ Inserted the data successfully.')
 
     def code_statistics(self) -> str:
         """See the code statistics of the application."""
@@ -172,7 +208,7 @@ class PasswordManager:
                     ctr['classes'] += line.startswith('class')
                     ctr['functions'] += line.startswith('def')
 
-        return '\n'.join(f'{k.capitalize()}: {v}' for k, v in ctr.items())
+        print('\n'.join(f'{k.capitalize()}: {v}' for k, v in ctr.items()))
 
     def check_owner(self) -> bool:
         """This is the method to check the correct owner beforehand.

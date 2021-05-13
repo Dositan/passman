@@ -1,4 +1,3 @@
-import os.path
 import sqlite3
 from typing import NoReturn
 
@@ -16,8 +15,9 @@ class DatabaseManager:
         self.cursor = self._connection.cursor()
         self.logger = create_logger(self.__class__.__name__)
 
-        if not os.path.isfile(f'{PATH}/passwords.db'):
-            self.logger.exception('Could not find the database.')
+        check = self.cursor.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='passwords';").fetchone()
+        if not check:
+            self.logger.exception('Could not find the table.')
             self._build_schema()  # Simply, the setup process.
             # Build the schema only if the file does not exist yet.
 
