@@ -1,7 +1,7 @@
 import argparse
 from typing import NoReturn
 
-__all__ = ('PasswordArguments',)
+__all__ = ('Arguments',)
 
 
 class DefaultArguments(argparse.ArgumentParser):
@@ -14,7 +14,7 @@ class DefaultArguments(argparse.ArgumentParser):
         raise RuntimeError(message)
 
 
-class PasswordArguments(DefaultArguments):
+class Arguments(DefaultArguments):
     """The Password Arguments class to ease up the flag creation process."""
 
     def add(self, name: str, description: str = 'No help given.') -> NoReturn:
