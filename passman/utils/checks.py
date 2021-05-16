@@ -1,6 +1,7 @@
 import re
 
-from passman.core import create_logger, STRONG_PASSWORD
+from passman.core import STRONG_PASSWORD, create_logger
+
 from .errors import TooWeakPassword
 
 __all__ = ('PasswordStrength',)
@@ -15,6 +16,6 @@ class PasswordStrength:
 
     def check(self, password: str):
         if self.pattern.match(password):
-            return True
+            return '✅ The password is valid.'
 
         return TooWeakPassword(password)

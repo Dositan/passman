@@ -44,10 +44,11 @@ def keep_living(func):
     methods that have sense being used with a loop."""
     def inner(*args, **kwargs):
         func(*args, **kwargs)
-
         print(DASH_LINE)
+
         while convert_choice(sinput('📢 Do you want to repeat (y/n)? ')):
             func(*args, **kwargs)
+            print(DASH_LINE)
 
     return inner
 
@@ -77,12 +78,7 @@ class PasswordManager:
         # TODO: use checking everywhere the password was entered.
         # FIXME: create a normal way of a password checking in ./checks.py
         password = sinput('Enter the password that should be checked: ')
-
-        if (check := self.strength.check(password)) is True:
-            return print('✅ The password is valid.')
-
-        print(check)
-        return print(DASH_LINE)
+        return print(self.strength.check(password))
         
         # We don't have to check for the raised exception beforehand
         # since we are handling all the possible errors in the __main__.py file.
