@@ -44,4 +44,4 @@ if __name__ == '__main__':
     except KeyboardInterrupt:  # CTRL-C
         logger.info('Exiting...')
         # Notify that the program is exiting instead of sending
-        # the exception that users will not get.
+        # the exception that users will not understand.

@@ -6,7 +6,7 @@ from typing import NoReturn
 
 from passman.core import DatabaseManager, create_logger
 from passman.core.constants import *
-from passman.utils import NotOwner, TabulateData
+from passman.utils import NotOwner, PasswordStrength, TabulateData
 
 __all__ = ('PasswordManager',)
 
@@ -45,7 +45,8 @@ def keep_living(func):
     def inner(*args, **kwargs):
         func(*args, **kwargs)
 
-        while convert_choice(sinput('📢 Do you want to continue (y/n)? ')):
+        print(DASH_LINE)
+        while convert_choice(sinput('📢 Do you want to repeat (y/n)? ')):
             func(*args, **kwargs)
 
     return inner
@@ -57,13 +58,34 @@ class PasswordManager:
     def __init__(self):
         self.logger = create_logger(self.__class__.__name__)
         self.database = DatabaseManager()
+        self.strength = PasswordStrength()
 
         with open(f'{PATH}/config.json') as file:
             self.config = json.load(file)
 
     def __dir__(self):
-        return [self.generate_password, self.save_password, self.show_data,
-                self.export_data, self.code_statistics]
+        return [self.generate_password, self.save_password, self.check_password,
+                self.show_data, self.export_data, self.code_statistics]
+
+    @keep_living
+    def check_password(self):
+        """The check password method to make user sure about their
+        password strength. 
+
+        Planned to be used everywhere the password was entered.
+        """
+        # TODO: use checking everywhere the password was entered.
+        # FIXME: create a normal way of a password checking in ./checks.py
+        password = sinput('Enter the password that should be checked: ')
+
+        if (check := self.strength.check(password)) is True:
+            return print('✅ The password is valid.')
+
+        print(check)
+        return print(DASH_LINE)
+        
+        # We don't have to check for the raised exception beforehand
+        # since we are handling all the possible errors in the __main__.py file.
 
     def check_config(self) -> bool:
         """The check config method to manipulate with the configuration file
@@ -110,8 +132,9 @@ class PasswordManager:
             print(MENU_INFO)
             print(DASH_LINE)
 
+            # Asking the user to choose one of the features.
             option = int(input('What option would you choose? '))
-            return self.__dir__()[option - 1]()
+            return self.__dir__()[option - 1]()  # Consequently calling the method.
 
         except (ValueError, TypeError, IndexError) as e:
             self.logger.error(e)
