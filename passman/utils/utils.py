@@ -4,8 +4,8 @@ from collections import Counter
 from glob import glob
 from typing import NoReturn
 
-from passman.core import DatabaseManager, create_logger
-from passman.core.constants import *
+from passman.core import (DASH_LINE, HOME_DIR, MENU_INFO, PATH,
+                          DatabaseManager, create_logger)
 from passman.utils import NotOwner, PasswordStrength, TabulateData
 
 __all__ = ('PasswordManager',)
@@ -61,7 +61,7 @@ class PasswordManager:
         self.database = DatabaseManager()
         self.strength = PasswordStrength()
 
-        with open(f'{PATH}/config.json') as file:
+        with open(f'{PATH}/config.json', 'r') as file:
             self.config = json.load(file)
 
     def __dir__(self):
@@ -71,7 +71,7 @@ class PasswordManager:
     @keep_living
     def check_password(self):
         """The check password method to make user sure about their
-        password strength. 
+        password strength.
 
         Planned to be used everywhere the password was entered.
         """
@@ -79,7 +79,7 @@ class PasswordManager:
         # FIXME: create a normal way of a password checking in ./checks.py
         password = sinput('Enter the password that should be checked: ')
         return print(self.strength.check(password))
-        
+
         # We don't have to check for the raised exception beforehand
         # since we are handling all the possible errors in the __main__.py file.
 
@@ -104,6 +104,22 @@ class PasswordManager:
 
         return False
 
+    def reset_config(self):
+        """
+        The helper method for the flag "--reset-config"
+        to clear the configuration file consequently.
+        """
+        with open(f'{PATH}/config.json', 'w') as fp:
+            # That is simply how we are going to reset the config.
+            # This also avoids all possible errors, but anyways
+            # we got to check for errors by doing try/catch.
+            json.dump({}, fp)
+
+        try:
+            self.logger.info('Reset the user configuration successfully.')
+        except Exception as e:
+            self.logger.error(f'Unexpected error occured: {e}')
+
     def setup(self) -> NoReturn:
         """The setup method called by --setup flag.
 
@@ -115,7 +131,7 @@ class PasswordManager:
         password = sinput('What about password? ')
 
         with open(f'{PATH}/config.json', 'w') as fp:
-            json.dump({'name': name, 'password': password}, fp=fp, indent=4)
+            json.dump({'name': name, 'password': password}, fp, indent=4)
 
         self.logger.info('Setup process was finished successfully.')
         self.logger.info(f'Current username: {name}')
@@ -180,7 +196,7 @@ class PasswordManager:
     @staticmethod
     def _true_false_only(message: str, options: tuple):
         """Does the same stuff as _get_params, but is limited in arguments choice.
-        
+
         Here y | yes | + considered as True, anything else as False."""
         inputs = {option: convert_choice(sinput(message.format(option))) for option in options}
         print(DASH_LINE)

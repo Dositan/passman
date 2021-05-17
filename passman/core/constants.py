@@ -1,15 +1,15 @@
 from pathlib import Path
 
 __all__ = (
-  'MENU_INFO',
-  'PATH',
-  'HOME_DIR',
-  'BASE',
-  'NUMBERS',
-  'UPPERCASE',
-  'SPECIAL',
-  'DASH_LINE',
-  'STRONG_PASSWORD'
+    'MENU_INFO',
+    'PATH',
+    'HOME_DIR',
+    'BASE',
+    'NUMBERS',
+    'UPPERCASE',
+    'SPECIAL',
+    'DASH_LINE',
+    'STRONG_PASSWORD',
 )
 
 # Database-config part.

@@ -1,5 +1,6 @@
 from passman import Arguments, PasswordManager, __version__, create_logger
 
+# Accessing the variable here since it is going to be used only here.
 APP_INFO = f'''
 Passman v{__version__} - made with love by Dosek for users.
 The advantages of choosing passman:
@@ -13,6 +14,7 @@ logger = create_logger('passman')
 parser = Arguments()
 parser.add('--setup', 'Whether to set the owner name with the password.')
 parser.add('--info', 'See some detailed info about the application.')
+parser.add('--reset-config', 'Reset the config after you have finished the session.')
 
 
 def main():
@@ -20,6 +22,7 @@ def main():
     pm = PasswordManager()
     args = parser.parse()
 
+    # Idrk where else I could try it.
     if args.pop('info'):
         return print(APP_INFO)
 
@@ -33,6 +36,9 @@ def main():
 
         pm.check_owner()
         pm.menu()  # Starting the interactive menu.
+
+        if args.pop('reset_config'):
+            pm.reset_config()
 
     except Exception as e:
         return pm.logger.error(e)

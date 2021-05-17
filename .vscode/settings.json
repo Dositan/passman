@@ -3,7 +3,6 @@
         "**/__pycache__": true
     },
     "python.formatting.provider": "black",
-    "files.associations": {
-        "iostream": "cpp"
-    }
+    "python.linting.enabled": true,
+    "python.linting.flake8Enabled": true
 }
