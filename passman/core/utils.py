@@ -1,4 +1,7 @@
 
+__all__ = ('TabulateData',)
+
+
 class TabulateData:
     def __init__(self):
         self._rows = []

@@ -1,53 +1,48 @@
-from passman import Arguments, PasswordManager, __version__, create_logger
+import logging
+import sys
 
-# Accessing the variable here since it is going to be used only here.
-APP_INFO = f'''
-Passman v{__version__} - made with love by Dosek for users.
-The advantages of choosing passman:
-  1. It is open-source.
-  2. It is safe since the data is stored in the local database.
-  3. There aren't any better terminal-specialized password managing apps existing.
-  4. Passman gets updated every day so you won't miss new features.
-'''
+from passman.logger import init_logging
+from passman.cli import parse_early_exit_flags, parse_flags
+from passman.core.manager import PasswordManager
 
-logger = create_logger('passman')
-parser = Arguments()
-parser.add('--setup', 'Whether to set the owner name with the password.')
-parser.add('--info', 'See some detailed info about the application.')
-parser.add('--reset-config', 'Reset the config after you have finished the session.')
+log = logging.getLogger('passman.main')
 
 
 def main():
     """The heart of this application."""
-    pm = PasswordManager()
-    args = parser.parse()
+    # Initialize logging features for the project.
+    init_logging(logging.INFO)
 
-    # Idrk where else I could try it.
-    if args.pop('info'):
-        return print(APP_INFO)
+    # Beforehand flag-parsing.
+    args = parse_flags(sys.argv[1:])
+    parse_early_exit_flags(args)
 
-    if args.pop('setup'):
-        return pm.setup()
+    manager = PasswordManager()
+    if args.setup:
+        manager.setup()
+        sys.exit(0)
 
     try:
-        if pm.check_config():
-            return  # The configuration is fresh as hell and is not ready
+        if manager.check_config():
+            sys.exit(0)  # The configuration is fresh as hell and is not ready
             # To be used to log in.
 
-        pm.check_owner()
-        pm.menu()  # Starting the interactive menu.
+        manager.check_owner()
+        manager.menu()  # Starting the interactive menu.
 
-        if args.pop('reset_config'):
-            pm.reset_config()
+        if args.reset_config:
+            manager.reset_config()
 
-    except Exception as e:
-        return pm.logger.error(e)
+    except KeyboardInterrupt:  # CTRL-C
+        log.info('Exiting...')
+        # Notify that the program is exiting instead of sending
+        # the exception that users will not even understand.
+        sys.exit(0)
+
+    except Exception as exc:
+        log.error(exc)
+        sys.exit(1)  # Because of an unhandled exception.
 
 
 if __name__ == '__main__':
-    try:
-        main()
-    except KeyboardInterrupt:  # CTRL-C
-        logger.info('Exiting...')
-        # Notify that the program is exiting instead of sending
-        # the exception that users will not understand.
+    main()
