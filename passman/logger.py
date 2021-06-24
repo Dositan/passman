@@ -4,11 +4,11 @@ import sys
 __all__ = ('init_logging',)
 
 
-def init_logging(level: int) -> None:
+def init_logging(level: int = logging.INFO) -> None:
     """The logger initializing method used to ease up the logging manipulation.
 
     Args:
-        level (int): The minimal logging level.
+        level (int, optional): The minimal logging level. Defaults to logging.INFO.
     """
     root = logging.getLogger()
 

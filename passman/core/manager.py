@@ -4,6 +4,7 @@ import logging
 import random
 import re
 from pathlib import Path
+from typing import Tuple
 
 # local code
 from .database import DatabaseManager
@@ -195,7 +196,7 @@ class PasswordManager(DatabaseManager):
             log.error(f'Something went wrong: {e}')
 
     @staticmethod
-    def _get_params(message: str, options: tuple) -> dict:
+    def _get_params(message: str, options: Tuple[str]) -> dict:
         """The interactive way to get kwargs that will be passed in `generate_password`.
 
         Args:
@@ -210,7 +211,7 @@ class PasswordManager(DatabaseManager):
         return inputs
 
     @staticmethod
-    def _true_false_only(message: str, options: tuple):
+    def _true_false_only(message: str, options: Tuple[str]):
         """Does the same stuff as _get_params, but is limited in arguments choice.
 
         Here y | yes | + considered as True, anything else as False.

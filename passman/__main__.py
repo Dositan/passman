@@ -1,7 +1,6 @@
 import logging
 import sys
 
-from passman.logger import init_logging
 from passman.cli import parse_early_exit_flags, parse_flags
 from passman.core.manager import PasswordManager
 
@@ -10,9 +9,6 @@ log = logging.getLogger('passman.main')
 
 def main():
     """The heart of this application."""
-    # Initialize logging features for the project.
-    init_logging(logging.INFO)
-
     # Beforehand flag-parsing.
     args = parse_flags(sys.argv[1:])
     parse_early_exit_flags(args)

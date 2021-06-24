@@ -1,3 +1,4 @@
+from typing import List, Tuple
 
 __all__ = ('TabulateData',)
 
@@ -8,20 +9,20 @@ class TabulateData:
         self._widths = []
         self._columns = []
 
-    def set_columns(self, columns: list):
+    def set_columns(self, columns: List[str]):
         """Set columns for the visual table.
 
         Args:
-            columns (list): A list of strings (names) of columns.
+            columns (List[str]): A list of strings (names) of columns.
         """
         self._columns = columns
         self._widths = [len(c) + 2 for c in columns]
 
-    def _add_row(self, row: tuple):
+    def _add_row(self, row: Tuple[str]):
         """Add a row for the visual table.
 
         Args:
-            row (tuple): A tuple of values of columns.
+            row (Tuple[str]): A tuple of values of columns.
         """
         rows = [str(r) for r in row]
         self._rows.append(rows)
@@ -31,13 +32,13 @@ class TabulateData:
             if width > self._widths[index]:
                 self._widths[index] = width
 
-    def set_rows(self, rows: list):
+    def set_rows(self, rows: List[Tuple[str]]):
         """Set multiple rows for the visual table.
 
         This just is an iterative way of the self._add_row method.
 
         Args:
-            rows (list): A list of tuples of values of columns.
+            rows (List[Tuple[str]]): A list of tuples of values of columns.
         """
         for row in rows:
             self._add_row(row)
@@ -55,7 +56,7 @@ class TabulateData:
 
         to_draw = [sep]
 
-        def get_entry(data: list):
+        def get_entry(data: List[str]):
             elem = '|'.join(f'{e:^{self._widths[i]}}' for i, e in enumerate(data))
             return f'|{elem}|'
 

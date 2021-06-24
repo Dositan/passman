@@ -12,8 +12,8 @@ class DatabaseManager:
         self._connection = sqlite3.connect('./passman/data/passwords.db')
         self.cursor = self._connection.cursor()
 
-        table_exists = self.cursor.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='passwords';").fetchone()
-        if table_exists is None:
+        query = "SELECT name FROM sqlite_master WHERE type='table' AND name='passwords';"
+        if (self.cursor.execute(query).fetchone()) is None:
             log.exception('Could not find the table.')
             self._build_schema()  # Simply, the setup process.
             # Build the schema only if the file does not exist yet.
@@ -77,12 +77,3 @@ class DatabaseManager:
         """
         query = 'DELETE FROM passwords WHERE network = ?;'
         self.push(query, network)
-
-    def update(self, query: str, values: tuple) -> None:
-        """A quick update method that runs the given query using given values.
-
-        Args:
-            query (str): An SQL query to execute.
-            values (tuple): A tuple of values to replace the old values with.
-        """
-        self.push(query, values)
