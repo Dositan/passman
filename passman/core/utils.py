@@ -9,20 +9,24 @@ class TabulateData:
         self._widths = []
         self._columns = []
 
-    def set_columns(self, columns: List[str]):
+    def set_columns(self, columns: List[str]) -> None:
         """Set columns for the visual table.
 
-        Args:
-            columns (List[str]): A list of strings (names) of columns.
+        Parameters
+        ----------
+        columns : List[str]
+            A list of strings (names) of columns.
         """
         self._columns = columns
         self._widths = [len(c) + 2 for c in columns]
 
-    def _add_row(self, row: Tuple[str]):
+    def _add_row(self, row: Tuple[str]) -> None:
         """Add a row for the visual table.
 
-        Args:
-            row (Tuple[str]): A tuple of values of columns.
+        Parameters
+        ----------
+        row : Tuple[str]
+            A tuple of values of columns.
         """
         rows = [str(r) for r in row]
         self._rows.append(rows)
@@ -32,24 +36,28 @@ class TabulateData:
             if width > self._widths[index]:
                 self._widths[index] = width
 
-    def set_rows(self, rows: List[Tuple[str]]):
-        """Set multiple rows for the visual table.
+    def set_rows(self, rows: List[Tuple[str]]) -> None:
+        """Set multiple rows for the visual table at once.
 
-        This just is an iterative way of the self._add_row method.
+        This just is an iterative way of the `_add_row` method.
 
-        Args:
-            rows (List[Tuple[str]]): A list of tuples of values of columns.
+        Parameters
+        ----------
+        rows : List[Tuple[str]]
+            A list of tuples of values of columns.
         """
         for row in rows:
             self._add_row(row)
 
     def render(self) -> str:
-        """The main method that puts all the magic together.
+        """This puts all the magic together.
 
         This method visualizes the table manipulating with loads of values.
 
-        Returns:
-            str: The rendered table.
+        Returns
+        -------
+        str
+            The rendered table.
         """
         sep = '+'.join('-' * w for w in self._widths)
         sep = f'+{sep}+'

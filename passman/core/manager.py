@@ -4,7 +4,7 @@ import logging
 import random
 import re
 from pathlib import Path
-from typing import Tuple
+from typing import Dict, Tuple
 
 # local code
 from .database import DatabaseManager
@@ -27,41 +27,50 @@ Currently-supported features:
 '''
 
 
-def sinput(message: str):
-    """This is just to avoid extra spaces in the user-input
-    that may cause some logical problems.
+def sinput(message: str) -> str:
+    """This avoids extra spaces in the user-input that may cause some issues.
 
-    Args:
-        message (str): Accordingly, a message to get input by.
+    Parameters
+    ----------
+    message : str
+        The message content to get the input by.
 
-    Returns:
-        str: Stripped input function.
+    Returns
+    -------
+    str
+        Stripped user-input content.
     """
     return input(message).strip()
 
 
 def convert_choice(choice: str.lower) -> bool:
-    """The fast way to figure out the user choice.
+    """The way of figuring out the user choice.
 
-    Args:
-        choice (str): User-input to grab the choice from.
+    Parameters
+    ----------
+    choice : str.lower
+        User-input to calculate the choice from.
 
-    Returns:
-        bool: Either True or False, according to the convertation.
+    Returns
+    -------
+    bool
+        Either True or False, according to the convertation.
+
+    Raises
+    ------
+    WrongChoice
+        When the user provides an unexpected choice.
     """
     if choice in ('y', 'yes', '+'):
         return True
-
     elif choice in ('n', 'no', '-'):
         return False
-
     # Consider anything else as the attempt to crash the program.
     raise WrongChoice('Wrong choice provided, choose from "y/n"')
 
 
 def keep_living(func):
-    """A special decorator made to make endless loops for
-    methods that have sense being used with a loop."""
+    """This makes endless loops for methods that have sense being used with a loop."""
 
     def inner(*args, **kwargs):
         func(*args, **kwargs)
@@ -85,8 +94,7 @@ class PasswordManager(DatabaseManager):
 
     @keep_living
     def check_password(self) -> None:
-        """The check password method to make user sure about their
-        password strength.
+        """This makes the user sure about their password strength.
 
         Planned to be used everywhere the password was entered.
         """
@@ -98,11 +106,12 @@ class PasswordManager(DatabaseManager):
         print(f'This password ({password}) looks kind of weak.')
 
     def check_config(self) -> bool:
-        """The check config method to manipulate with the configuration file
-        before the program opens the menu.
+        """This manipulates with the configuration file before the program menu opens.
 
-        Returns:
-            bool: The check result.
+        Returns
+        -------
+        bool
+            The check result.
         """
         # It is useful when the user did not provide their credits to log
         # in and this function exactly catches those moments.
@@ -115,20 +124,16 @@ class PasswordManager(DatabaseManager):
                 # The setup process was already finished.
                 log.info('You are ready to go, run the program again and explore the features.')
                 return True  # At this point, the config will exist.
-
         return False
 
     def reset_config(self) -> None:
-        """
-        The helper method for the flag "--reset-config"
-        to clear the configuration file consequently.
-        """
+        """Helper method for the flag "--reset-config" to clear config consequently."""
+
         with open(CONFIG_PATH, 'w') as fp:
             # That is simply how we are going to reset the config.
             # This also avoids all possible errors, but anyways
             # we got to check for errors by doing try/catch.
             json.dump({}, fp)
-
         try:
             log.info('Reset the user configuration successfully.')
         except Exception as e:
@@ -168,9 +173,7 @@ class PasswordManager(DatabaseManager):
             log.error(e)
 
     def show_data(self):
-        """The data showing method to make the user able to visualize
-        their data, i.e. accounts in a pretty-formatted table.
-        """
+        """This visualize the user data, i.e. formats in a pretty-formatted table."""
         table = TabulateData()
         table.set_columns(['network', 'email', 'password'])
 
@@ -180,10 +183,7 @@ class PasswordManager(DatabaseManager):
         print(table.render())
 
     def export_data(self) -> str:
-        """The data exporting method to make the user able to extract
-
-        all of their data into the `passwords.txt` file.
-        """
+        """This extracts all of the user data into the `passwords.txt` file."""
         path = sinput('Enter the path you would like to save your data in.\n'
                       'For example, Desktop/main: ')
 
@@ -191,20 +191,24 @@ class PasswordManager(DatabaseManager):
             with open(f'{Path.home()}/{path}/passwords.txt', 'w') as f:
                 f.write(self.show_data())
             log.info('Exported all of your passwords successfully.')
-
         except FileNotFoundError as e:
             log.error(f'Something went wrong: {e}')
 
     @staticmethod
-    def _get_params(message: str, options: Tuple[str]) -> dict:
-        """The interactive way to get kwargs that will be passed in `generate_password`.
+    def _get_params(message: str, options: Tuple[str]) -> Dict[str, str]:
+        """The interactive way to get kwargs that gets passed in `generate_password`.
 
-        Args:
-            message (str): A formattable message for all inputs.
-            options (tuple): A tuple of options to provide.
+        Parameters
+        ----------
+        message : str
+            Message sample to get user-inputs with.
+        options : Tuple[str]
+            A tuple of options to provide our user.
 
-        Returns:
-            dict: A dictionary of necessary keys.
+        Returns
+        -------
+        Dict[str, str]
+            A dictionary of necessary keys.
         """
         inputs = {option: sinput(message.format(option)) for option in options}
         print(DASH_LINE)
@@ -214,7 +218,7 @@ class PasswordManager(DatabaseManager):
     def _true_false_only(message: str, options: Tuple[str]):
         """Does the same stuff as _get_params, but is limited in arguments choice.
 
-        Here y | yes | + considered as True, anything else as False.
+        Here (y|yes|+) are considered as True, anything else as False.
         """
         inputs = {option: convert_choice(sinput(message.format(option))) for option in options}
         print(DASH_LINE)
@@ -235,10 +239,8 @@ class PasswordManager(DatabaseManager):
 
         if kwargs.pop('numbers'):
             BASE += NUMBERS
-
         if kwargs.pop('uppercase'):
             BASE += UPPERCASE
-
         if kwargs.pop('special characters'):
             BASE += SPECIAL
 
@@ -247,11 +249,11 @@ class PasswordManager(DatabaseManager):
 
     @keep_living
     def save_password(self, **kwargs) -> str:
-        """This function is created to save passwords according to the given credits."""
+        """This saves passwords according to the given credits."""
         options = ('network', 'email', 'content')
         kwargs = kwargs or self._get_params('Enter the {} credits: ', options)
 
-        self.add(**kwargs)
+        self.add(**kwargs)  # i.e saving the account.
         log.info('✅ Inserted the data successfully.')
 
     def check_owner(self) -> bool:

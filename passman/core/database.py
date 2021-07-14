@@ -1,5 +1,6 @@
 import logging
 import sqlite3
+from typing import Any
 
 __all__ = ('DatabaseManager',)
 log = logging.getLogger('passman.database')
@@ -18,12 +19,24 @@ class DatabaseManager:
             self._build_schema()  # Simply, the setup process.
             # Build the schema only if the file does not exist yet.
 
-    def push(self, sql: str, args: tuple = None):
-        """The push method to ease up the database manipulation for the developer.
+    @property
+    def connection(self) -> sqlite3.Connection:
+        return self._connection
 
-        Args:
-            sql (str): An SQL query to execute.
-            args (tuple, optional): A tuple of arguments to pass in. Defaults to None.
+    def push(self, sql: str, args: tuple = None) -> Any:
+        """Push method to ease up the database manipulation for the developer.
+
+        Parameters
+        ----------
+        sql : str
+            An SQL query to execute.
+        args : tuple, optional
+            A tuple of arguments to pass in, by default None
+
+        Returns
+        -------
+        Any
+            SQL execution may return literally any type.
         """
         if args:
             data = self.cursor.execute(sql, args)
@@ -35,31 +48,29 @@ class DatabaseManager:
         return self.cursor.execute(sql)
 
     def _build_schema(self) -> None:
-        """This is a method that simply runs the database setup process."""
+        """This simply runs the database setup process."""
+
         log.info('Trying to build the schema...')
 
+        with open('./passman/data/build.sql', 'r') as fp:
+            schema = fp.read()
         try:
-            schema = '''
-            CREATE TABLE IF NOT EXISTS passwords (
-                network VARCHAR(20) PRIMARY KEY,
-                email VARCHAR(100),
-                content VARCHAR(50)
-            );
-            '''
             self.push(schema)
             log.info('Built the schema successfully.')
-
         except Exception as e:
-            log.error(f'Failed to build: {e}')
+            log.error('Failed to build', exc_info=e)
 
     def add(self, network: str, email: str, content: str) -> None:
-        """A quick add method that saves the account
-        data according to the given parameters.
+        """This saves an account data according to the given parameters.
 
-        Args:
-            network (str): The network name.
-            email (str): The email address for the network.
-            content (str): The password for the network you log in with.
+        Parameters
+        ----------
+        network : str
+            The network name.
+        email : str
+            The email address of the network.
+        content : str
+            The password of the network you log in with.
         """
         query = 'INSERT INTO passwords(network, email, content) VALUES(?, ?, ?);'
 
@@ -69,11 +80,12 @@ class DatabaseManager:
             log.error('This network credits already exist in the database.')
 
     def remove(self, network: str) -> None:
-        """A quick remove method that deletes a row with the given network
-        from the local database.
+        """This deletes a row with the given network from the database.
 
-        Args:
-            network (str): The network name, case matters.
+        Parameters
+        ----------
+        network : str
+            The network name, case matters.
         """
         query = 'DELETE FROM passwords WHERE network = ?;'
         self.push(query, network)
