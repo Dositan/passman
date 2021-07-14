@@ -7,7 +7,7 @@ from passman.core.manager import PasswordManager
 log = logging.getLogger('passman.main')
 
 
-def main():
+def main() -> None:
     """The heart of this application."""
     # Beforehand flag-parsing.
     args = parse_flags(sys.argv[1:])

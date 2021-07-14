@@ -7,8 +7,10 @@ __all__ = ('init_logging',)
 def init_logging(level: int = logging.INFO) -> None:
     """The logger initializing method used to ease up the logging manipulation.
 
-    Args:
-        level (int, optional): The minimal logging level. Defaults to logging.INFO.
+    Parameters
+    ----------
+    level : int, optional
+        The minimal logging level, by default logging.INFO
     """
     root = logging.getLogger()
 

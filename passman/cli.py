@@ -42,5 +42,4 @@ def parse_flags(args: argparse.Namespace = None) -> argparse.Namespace:
         action='store_true',
         help='Whether to reset the current configuration after app exit.'
     )
-
     return parser.parse_args(args)
