@@ -4,3 +4,7 @@ __pycache__/
 
 # Files
 passwords.db
+
+# Not yet.
+pyproject.toml
+setup.cfg
