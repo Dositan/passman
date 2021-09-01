@@ -1,10 +1,9 @@
+# Virtual environment.
+env/
+
 # Folders
 ict/
 __pycache__/
 
 # Files
 passwords.db
-
-# Not yet.
-pyproject.toml
-setup.cfg
