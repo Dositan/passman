@@ -16,9 +16,6 @@ class UserError(BaseError):
 class NotOwner(UserError):
     """Gets raised when the user fails the owner check."""
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-
 
 class WrongChoice(UserError):
     """Execption gets raised when the user does not provide
@@ -26,16 +23,9 @@ class WrongChoice(UserError):
     any of the expected choices, e.g yes/no or +/-
     """
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-
 
 class LengthNotInRange(PasswordError):
     """Exception raised when the given length was too big."""
 
-    def __init__(self, length: int, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.length = length
-
-    def __str__(self):
-        return f"Length is not in (4, 50) range. ({self.length} given)."
+    def __init__(self, length: int):
+        super().__init__(f"Length is not in (4, 50) range. ({length} given).")
