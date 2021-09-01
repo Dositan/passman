@@ -2,8 +2,7 @@
 env/
 
 # Folders
-ict/
 __pycache__/
 
 # Files
-passwords.db
+data/passwords.db
