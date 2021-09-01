@@ -1,0 +1,17 @@
+[tool.poetry]
+name = "passman"
+version = "0.4.0"
+description = "Password managing CLI tool for everyone."
+authors = ["Dastan Ozgeldi <ozgdastan@gmail.com>"]
+license = "MIT"
+
+[tool.poetry.dependencies]
+python = "^3.8"
+
+[tool.poetry.dev-dependencies]
+black = "^21.8b0"
+flake8 = "^3.9.2"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
