@@ -1,10 +1,6 @@
 # passman
 ### Description
-A simple password manager that has no package dependencies. Install and run it locally without caring about requirements.
-
-# May I try this app without setting up?
-Yes. There is a web-site called `Replit` where you can run this application without having to setup.
-https://replit.com/@Dosek/password-manager follow this link to get started!
+A simple password manager that has no package dependencies (for now). Install and run it locally without caring about requirements.
 
 # How to use?
 ### Quick start
@@ -18,4 +14,4 @@ Let's do `python -m passman --setup`. This calls a particular method that does a
 
 # Usage Examples
 ### Generating the password and showing the data
-![](https://github.com/Dositan/password-manager/blob/master/passman/data/example.gif)
+![](https://github.com/Dositan/passman/blob/master/data/example.gif)
