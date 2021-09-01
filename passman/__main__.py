@@ -2,7 +2,7 @@ import logging
 import sys
 
 from passman.cli import parse_early_exit_flags, parse_flags
-from passman.core.manager import PasswordManager
+from passman.manager import PasswordManager
 
 log = logging.getLogger("passman.main")
 

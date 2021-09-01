@@ -10,7 +10,7 @@ class DatabaseManager:
     """The Database Manager class to ease up database manipulation."""
 
     def __init__(self):
-        self._connection = sqlite3.connect("./passman/data/passwords.db")
+        self._connection = sqlite3.connect("./data/passwords.db")
         self.cursor = self._connection.cursor()
 
         query = (
@@ -54,7 +54,7 @@ class DatabaseManager:
 
         log.info("Trying to build the schema...")
 
-        with open("./passman/data/build.sql", "r") as fp:
+        with open("./data/build.sql", "r") as fp:
             schema = fp.read()
         try:
             self.push(schema)

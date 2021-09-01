@@ -7,14 +7,14 @@ from pathlib import Path
 from typing import Dict, Tuple
 
 # local code
-from .database import DatabaseManager
-from .errors import NotOwner, WrongChoice
-from .utils import TabulateData
+from passman.database import DatabaseManager
+from passman.errors import NotOwner, WrongChoice
+from passman.utils import TabulateData
 
 __all__ = ("PasswordManager",)
 log = logging.getLogger("passman.manager")
 
-CONFIG_PATH = "./passman/data/config.json"
+CONFIG_PATH = "./data/config.json"
 DASH_LINE = "-" * 40
 MENU_INFO = """
     Welcome to the passman menu.
