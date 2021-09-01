@@ -1,5 +1,4 @@
-
-__all__ = ('WrongChoice', 'LengthNotInRange', 'NotOwner')
+__all__ = ("WrongChoice", "LengthNotInRange", "NotOwner")
 
 
 class BaseError(Exception):
@@ -39,4 +38,4 @@ class LengthNotInRange(PasswordError):
         self.length = length
 
     def __str__(self):
-        return f'Length is not in (4, 50) range. ({self.length} given).'
+        return f"Length is not in (4, 50) range. ({self.length} given)."

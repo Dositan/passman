@@ -4,7 +4,7 @@ import sys
 from passman.cli import parse_early_exit_flags, parse_flags
 from passman.core.manager import PasswordManager
 
-log = logging.getLogger('passman.main')
+log = logging.getLogger("passman.main")
 
 
 def main() -> None:
@@ -30,7 +30,7 @@ def main() -> None:
             manager.reset_config()
 
     except KeyboardInterrupt:  # CTRL-C
-        log.info('Exiting...')
+        log.info("Exiting...")
         # Notify that the program is exiting instead of sending
         # the exception that users will not even understand.
         sys.exit(0)
@@ -40,5 +40,5 @@ def main() -> None:
         sys.exit(1)  # Because of an unhandled exception.
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

@@ -1,6 +1,6 @@
 from typing import List, Tuple
 
-__all__ = ('TabulateData',)
+__all__ = ("TabulateData",)
 
 
 class TabulateData:
@@ -59,14 +59,14 @@ class TabulateData:
         str
             The rendered table.
         """
-        sep = '+'.join('-' * w for w in self._widths)
-        sep = f'+{sep}+'
+        sep = "+".join("-" * w for w in self._widths)
+        sep = f"+{sep}+"
 
         to_draw = [sep]
 
         def get_entry(data: List[str]):
-            elem = '|'.join(f'{e:^{self._widths[i]}}' for i, e in enumerate(data))
-            return f'|{elem}|'
+            elem = "|".join(f"{e:^{self._widths[i]}}" for i, e in enumerate(data))
+            return f"|{elem}|"
 
         to_draw.append(get_entry(self._columns))
         to_draw.append(sep)
@@ -75,4 +75,4 @@ class TabulateData:
             to_draw.append(get_entry(row))
 
         to_draw.append(sep)
-        return '\n'.join(to_draw)
+        return "\n".join(to_draw)
