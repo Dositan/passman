@@ -18,4 +18,4 @@ Let's do `python -m passman --setup`. This calls a particular method that does a
 
 ## Usage Examples
 ### Generating the password and showing the data
-![](data/example.gif)
+![Going to be deprecated very soon](data/example.gif)
