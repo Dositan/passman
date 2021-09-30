@@ -1,8 +1,10 @@
 # stdlibs
 import json
 import logging
+import os
 import random
 import re
+import string
 from pathlib import Path
 from typing import Dict, Tuple
 
@@ -63,7 +65,7 @@ def convert_choice(choice: str.lower) -> bool:
     """
     if choice in ("y", "yes", "+"):
         return True
-    elif choice in ("n", "no", "-"):
+    elif choice in ("n", "no", "-", ""):
         return False
     # Consider anything else as the attempt to crash the program.
     raise WrongChoice('Wrong choice provided, choose from "y/n"')
@@ -85,12 +87,6 @@ def keep_living(func):
 
 class PasswordManager(DatabaseManager):
     """The Password Manager class to manipulate with generating passwords."""
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        # Important instances.
-        with open(CONFIG_PATH, "r") as fp:
-            self.config = json.load(fp)
 
     @keep_living
     def check_password(self) -> None:
@@ -115,7 +111,7 @@ class PasswordManager(DatabaseManager):
         """
         # It is useful when the user did not provide their credits to log
         # in and this function exactly catches those moments.
-        if not self.config:
+        if not os.path.isfile(CONFIG_PATH):
             log.warning("Hey, looks like you did not set up your configuration yet")
             choice = convert_choice(sinput("but would you want to (y/n)? "))
             if choice:  # Checking for the "True" case.
@@ -123,23 +119,20 @@ class PasswordManager(DatabaseManager):
 
                 # The setup process was already finished.
                 log.info(
-                    "You are ready to go, run the program again and explore the features."
+                    "You are ready to go, run again and explore the features."
                 )
                 return True  # At this point, the config will exist.
         return False
 
     def reset_config(self) -> None:
         """Helper method for the flag "--reset-config" to clear config consequently."""
-
-        with open(CONFIG_PATH, "w") as fp:
-            # That is simply how we are going to reset the config.
-            # This also avoids all possible errors, but anyways
-            # we got to check for errors by doing try/catch.
-            json.dump({}, fp)
+        # This is how we are going to reset the configuration
+        # by simply removing the config file
+        os.remove(CONFIG_PATH)
         try:
             log.info("Reset the user configuration successfully.")
-        except Exception as e:
-            log.error(f"Unexpected error occured: {e}")
+        except FileNotFoundError as e:
+            log.error(f"File {CONFIG_PATH} does not exist: {e}")
 
     def setup(self) -> None:
         """The setup method called by --setup flag."""
@@ -170,7 +163,6 @@ class PasswordManager(DatabaseManager):
             # Asking the user to choose one of the features.
             option = int(input("What option would you choose? "))
             return methods[option - 1]()  # Consequently calling the method.
-
         except (ValueError, TypeError, IndexError) as e:
             log.error(e)
 
@@ -233,22 +225,18 @@ class PasswordManager(DatabaseManager):
     @keep_living
     def generate_password(self, **kwargs) -> str:
         """This function is created to generate passwords of the given length."""
-        BASE = "qwertyuiopasdfghjklzxcvbnm"
-        NUMBERS = "1234567890"
-        UPPERCASE = "QWERTYUIOPASDFGHJKLZXCVBNM"
-        SPECIAL = "!@#$%^&*()"
-
+        BASE = string.ascii_lowercase
         options = ("numbers", "uppercase", "special characters")
 
         length = int(input("Enter the length: "))
         kwargs = kwargs or self._true_false_only("Enter the {} option: ", options)
 
         if kwargs.pop("numbers"):
-            BASE += NUMBERS
+            BASE += string.digits
         if kwargs.pop("uppercase"):
-            BASE += UPPERCASE
+            BASE += string.ascii_uppercase
         if kwargs.pop("special characters"):
-            BASE += SPECIAL
+            BASE += string.punctuation
 
         result = random.choices(BASE, k=length)
         print("".join(result))
@@ -275,7 +263,12 @@ class PasswordManager(DatabaseManager):
         name = sinput("Enter your name: ")
         password = sinput("Enter your password: ")
 
-        if name == self.config["name"] and password == self.config["password"]:
+        # Important instances.
+        if os.path.isfile(CONFIG_PATH):
+            with open(CONFIG_PATH, "r") as fp:
+                config = json.load(fp)
+
+        if name == config["name"] and password == config["password"]:
             print(f"Welcome back, {name}!\n{DASH_LINE}")
             return True
 
