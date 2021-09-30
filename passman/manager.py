@@ -169,7 +169,7 @@ class PasswordManager(DatabaseManager):
     def show_data(self):
         """This visualize the user data, i.e. formats in a pretty-formatted table."""
         table = TabulateData()
-        table.set_columns(["network", "email", "password"])
+        table.set_columns(["id", "network", "email", "content"])
 
         results = self.push("SELECT * FROM passwords;").fetchall()
         table.set_rows(results)

@@ -26,7 +26,7 @@ class DatabaseManager:
     def connection(self) -> sqlite3.Connection:
         return self._connection
 
-    def push(self, sql: str, args: tuple = None) -> Any:
+    def push(self, sql: str, args: tuple = ()) -> Any:
         """Push method to ease up the database manipulation for the developer.
 
         Parameters
@@ -52,7 +52,6 @@ class DatabaseManager:
 
     def _build_schema(self) -> None:
         """This simply runs the database setup process."""
-
         log.info("Trying to build the schema...")
 
         with open("./data/build.sql", "r") as fp:
