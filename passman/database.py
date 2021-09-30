@@ -1,3 +1,4 @@
+# TODO: rewrite the whole logic using psycopg2
 import logging
 import sqlite3
 from typing import Any

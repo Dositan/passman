@@ -1,3 +1,4 @@
+# TODO: rewrite using click, if possible.
 import argparse
 import sys
 
