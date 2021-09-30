@@ -2,7 +2,9 @@
 env/
 
 # Folders
+v2/
 __pycache__/
 
 # Files
+poetry.lock
 data/passwords.db
