@@ -7,4 +7,5 @@ __pycache__/
 
 # Files
 poetry.lock
+data/config.json
 data/passwords.db
