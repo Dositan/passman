@@ -2,7 +2,8 @@
 env/
 
 # Folders
-v2/
+v1/
+daryn/
 __pycache__/
 
 # Files
