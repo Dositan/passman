@@ -14,9 +14,9 @@ app = typer.Typer(
 @app.command(name="genpass")
 def generate_password(
     length: int = typer.Argument(8, help="specify length for the password"),
-    numbers: bool = typer.Argument(False, help="include numbers"),
-    uppercase: bool = typer.Argument(False, help="include uppercase characters"),
-    special_characters: bool = typer.Argument(False, help="include special characters")
+    numbers: bool = typer.Option(False, help="include numbers"),
+    uppercase: bool = typer.Option(False, help="include uppercase characters"),
+    special_characters: bool = typer.Option(False, help="include special characters")
 ) -> None:
     """generates passwords for given parameters"""
     BASE = string.ascii_lowercase
