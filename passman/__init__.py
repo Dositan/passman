@@ -8,7 +8,7 @@ import os.path
 
 import typer
 
-__version__ = "1.0.0"
+__version__ = "1.0.1"
 
 
 CONFIG_PATH = "./data/config.json"
