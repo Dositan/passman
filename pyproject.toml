@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "passman"
+name = "passmanwastaken"
 version = "1.0.0"
 description = "Password managing CLI tool for everyone."
 authors = ["Dastan Ozgeldi <ozgdastan@gmail.com>"]
