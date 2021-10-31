@@ -3,8 +3,6 @@ import typer
 from passman import setup_func
 from passman.commands import log, quick
 
-CONFIG_PATH = "./data/config.json"
-
 app = typer.Typer(no_args_is_help=True)
 app.add_typer(log.app)
 app.add_typer(quick.app)
