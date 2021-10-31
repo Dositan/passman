@@ -81,13 +81,12 @@ class DatabaseManager:
         except sqlite3.IntegrityError:
             log.error("This network credits already exist in the database.")
 
-    def remove(self, network: str) -> None:
-        """This deletes a row with the given network from the database.
+    def remove(self, _id: int) -> None:
+        """This deletes a row with the given id.
 
         Parameters
         ----------
-        network : str
-            The network name, case matters.
+        _id : int
+            The id of the user.
         """
-        query = "DELETE FROM passwords WHERE network = ?;"
-        self.push(query, network)
+        self.push("DELETE FROM passwords WHERE id = ?;", _id)

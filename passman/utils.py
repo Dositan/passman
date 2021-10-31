@@ -1,6 +1,26 @@
 from typing import List, Tuple
 
-__all__ = ("TabulateData",)
+from passman import config
+
+
+def compare_data(login: str, password: str) -> bool:
+    """Used in comparing input details with config data.
+
+    Parameters
+    ----------
+    login : str
+        login credits written in config.json
+    password : str
+        password credits writte in config.json
+
+    Returns
+    -------
+    bool
+        True if credits match, False in any other cases.
+    """
+    if login == config["name"] and password == config["password"]:
+        return True
+    return False
 
 
 class TabulateData:
