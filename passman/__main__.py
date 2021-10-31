@@ -1,6 +1,7 @@
 import typer
 
-from passman import log, quick, setup_func
+from passman import setup_func
+from passman.commands import log, quick
 
 CONFIG_PATH = "./data/config.json"
 
