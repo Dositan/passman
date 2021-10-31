@@ -1,12 +1,13 @@
 [tool.poetry]
 name = "passmanwastaken"
-version = "1.0.0"
+version = "1.0.1"
 description = "Password managing CLI tool for everyone."
 authors = ["Dastan Ozgeldi <ozgdastan@gmail.com>"]
 license = "MIT"
 packages = [
     { include = "passman" },
 ]
+include = ["data/"]
 
 [tool.poetry.dependencies]
 python = "^3.8"
