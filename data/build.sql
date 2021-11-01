@@ -2,6 +2,6 @@ CREATE TABLE IF NOT EXISTS passwords (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     network VARCHAR(20),
     email VARCHAR(100),
-    content VARCHAR(50),
+    content CHAR(60),
     saved_at date DEFAULT CURRENT_TIMESTAMP
 );

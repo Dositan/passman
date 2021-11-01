@@ -2,8 +2,8 @@
 
 from pathlib import Path
 
+import bcrypt
 import typer
-
 from passman import config
 from passman.database import DatabaseManager
 from passman.utils import TabulateData
@@ -13,10 +13,11 @@ db = DatabaseManager()
 
 def callback() -> None:
     typer.secho("⚠️  This command requires logging in first.", fg="yellow")
-    name = input("Enter your name: ")
-    password = input("Enter your password: ")
+    name = typer.prompt("Name")
+    password = typer.prompt("Password", hide_input=True)
 
-    if name == config["name"] and password == config["password"]:
+    check = bcrypt.checkpw(password.encode("utf-8"), config["password"].encode("utf-8"))
+    if name == config["name"] and check:
         return True
 
     typer.secho("❌ Wrong owner credits were entered, exiting...", fg="red")
@@ -44,7 +45,7 @@ def save_password(network: str, email: str, content: str) -> None:
 def delete_password(
     row_id: str = typer.Argument(..., help="Row ID of the user data you want to delete")
 ) -> None:
-    """delete a row of user data depending on what number you provide"""
+    """delete a row of user data depending on what ID you provide"""
     db.remove(row_id)
     typer.secho(f"✅ Deleted password #{row_id} successfully.")
 

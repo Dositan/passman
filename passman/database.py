@@ -3,6 +3,8 @@ import logging
 import sqlite3
 from typing import Any
 
+import bcrypt
+
 __all__ = ("DatabaseManager",)
 log = logging.getLogger("passman.database")
 
@@ -18,7 +20,6 @@ class DatabaseManager:
             "SELECT name FROM sqlite_master WHERE type='table' AND name='passwords';"
         )
         if (self.cursor.execute(query).fetchone()) is None:
-            log.exception("Could not find the table.")
             self._build_schema()  # Simply, the setup process.
             # Build the schema only if the file does not exist yet.
 
@@ -75,6 +76,7 @@ class DatabaseManager:
             The password of the network you log in with.
         """
         query = "INSERT INTO passwords(network, email, content) VALUES(?, ?, ?);"
+        content = bcrypt.hashpw(content.encode("utf-8"), bcrypt.gensalt())
 
         try:
             self.push(query, (network, email, content))

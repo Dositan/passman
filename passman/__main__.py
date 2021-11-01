@@ -9,9 +9,11 @@ app.add_typer(quick.app)
 
 
 @app.command()
-def setup(show_credits: bool = False) -> None:
+def setup(
+    show_credits: bool = typer.Option(False, help="Show login details after setup")
+) -> None:
     """Set up a new account (or replace the previous one)"""
-    setup_func(show_credits)
+    setup_func(show_credits=show_credits)
 
 
 if __name__ == "__main__":
