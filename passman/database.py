@@ -83,12 +83,34 @@ class DatabaseManager:
         except sqlite3.IntegrityError:
             log.error("This network credits already exist in the database.")
 
-    def remove(self, _id: int) -> None:
+    def remove(self, user_id: int) -> None:
         """This deletes a row with the given id.
 
         Parameters
         ----------
-        _id : int
+        user_id : int
             The id of the user.
         """
-        self.push("DELETE FROM passwords WHERE id = ?;", _id)
+        self.push("DELETE FROM passwords WHERE id = ?;", user_id)
+
+    def update(self, user_id: int, network: str, email: str, content: str):
+        """This updates a row with the given user ID.
+
+        Parameters
+        ----------
+        user_id : int
+            The ID of the saved user (not a row number)
+        network : str
+            The network name.
+        email : str
+            The email address of the network.
+        content : str
+            The password of the network you log in with.
+        """
+        content = bcrypt.hashpw(content.encode("utf-8"), bcrypt.gensalt())
+        query = """
+        UPDATE passwords
+        SET network = ?, email = ?, content = ?
+        WHERE id = ?;
+        """
+        self.push(query, (network, email, content, user_id))
