@@ -10,10 +10,12 @@ import sys
 import bcrypt
 import typer
 
+from passman.database import DatabaseManager
+
 __version__ = "1.0.1"
 
-
 CONFIG_PATH = "./data/config.json"
+db = DatabaseManager()
 first_time = not os.path.isfile(CONFIG_PATH)
 
 
