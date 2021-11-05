@@ -1,14 +1,12 @@
 """Here we got commands with custom callback"""
 
 from pathlib import Path
+from typing import Tuple
 
 import bcrypt
 import typer
-from passman import config
-from passman.database import DatabaseManager
+from passman import config, db
 from passman.utils import TabulateData
-
-db = DatabaseManager()
 
 
 def callback() -> None:
@@ -41,13 +39,28 @@ def save_password(network: str, email: str, content: str) -> None:
     typer.secho("✅ Inserted the data successfully.", fg="green")
 
 
+@app.command(name="update")
+def update_password(
+    user_id: str,
+    credentials: Tuple[str, str, str] = typer.Argument(
+        ..., help="New network name, email and password"
+    )
+):
+    """update any user profile with the given ID
+
+    credentials argument is used to replace the old data.
+    """
+    db.update(user_id, *credentials)
+    typer.secho(f"✅ Updated password #{user_id} successfully.", fg="green")
+
+
 @app.command(name="delete")
 def delete_password(
-    row_id: str = typer.Argument(..., help="Row ID of the user data you want to delete")
+    user_id: str = typer.Argument(..., help="ID of the user you want to delete")
 ) -> None:
     """delete a row of user data depending on what ID you provide"""
-    db.remove(row_id)
-    typer.secho(f"✅ Deleted password #{row_id} successfully.")
+    db.remove(user_id)
+    typer.secho(f"✅ Deleted password #{user_id} successfully.", fg="green")
 
 
 def return_data() -> None:

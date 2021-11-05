@@ -12,7 +12,7 @@ import typer
 
 from passman.database import DatabaseManager
 
-__version__ = "1.0.1"
+__version__ = "1.0.2"
 
 CONFIG_PATH = "./data/config.json"
 db = DatabaseManager()
